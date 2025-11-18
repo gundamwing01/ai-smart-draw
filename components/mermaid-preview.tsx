@@ -60,27 +60,31 @@ export function MermaidPreview({
 
         let cancelled = false;
 
-        mermaidAPI
-            .render(diagramId, definition)
-            .then(({ svg }: { svg: string }) => {
-                if (!cancelled) {
-                    setSvg(svg);
-                    setRenderError(null);
-                }
-            })
-            .catch((error: unknown) => {
-                console.error("Mermaid render error:", error);
-                if (!cancelled) {
-                    setRenderError(
-                        error instanceof Error
-                            ? error.message
-                            : "无法渲染 Mermaid 图。"
-                    );
-                }
-            });
+        // 使用 setTimeout 确保定义完全加载后再渲染
+        const timer = setTimeout(() => {
+            mermaidAPI
+                .render(diagramId, definition)
+                .then(({ svg }: { svg: string }) => {
+                    if (!cancelled) {
+                        setSvg(svg);
+                        setRenderError(null);
+                    }
+                })
+                .catch((error: unknown) => {
+                    console.error("Mermaid render error:", error);
+                    if (!cancelled) {
+                        setRenderError(
+                            error instanceof Error
+                                ? error.message
+                                : "无法渲染 Mermaid 图。"
+                        );
+                    }
+                });
+        }, 500); // 延迟 500ms 确保定义完全加载
 
         return () => {
             cancelled = true;
+            clearTimeout(timer);
         };
     }, [definition, mermaidAPI, diagramId]);
 
