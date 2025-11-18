@@ -10,12 +10,13 @@ export function PlantUMLWorkspace() {
     return (
         <div className="flex flex-col h-full gap-1">
             <div className="flex-1 min-h-0">
-                <PlantUMLPreview definition={definition} onReset={clearDefinition} />
+                <PlantUMLPreview definition={definition} />
             </div>
             <div className="h-52">
                 <PlantUMLDefinitionCard
                     definition={definition}
                     onDefinitionChange={setDefinition}
+                    onReset={clearDefinition}
                 />
             </div>
         </div>

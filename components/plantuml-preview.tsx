@@ -14,12 +14,11 @@ import { cn } from "@/lib/utils";
 
 interface PlantUMLPreviewProps {
     definition: string;
-    onReset?: () => void;
 }
 
 const RENDER_DEBOUNCE_MS = 500;
 
-export function PlantUMLPreview({ definition, onReset }: PlantUMLPreviewProps) {
+export function PlantUMLPreview({ definition }: PlantUMLPreviewProps) {
     const [copied, setCopied] = useState(false);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [svgMarkup, setSvgMarkup] = useState<string>("");
@@ -193,28 +192,6 @@ export function PlantUMLPreview({ definition, onReset }: PlantUMLPreviewProps) {
                             <ZoomIn className="h-4 w-4" />
                         </Button>
                     </div>
-                    {onReset && (
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={onReset}
-                            disabled={isLoading}
-                        >
-                            <RefreshCcw className="h-4 w-4 mr-2" />
-                            重置
-                        </Button>
-                    )}
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={handleCopy}
-                        disabled={!definition}
-                    >
-                        <Copy className="h-4 w-4 mr-2" />
-                        {copied ? "已复制" : "复制"}
-                    </Button>
                 </div>
             </div>
             <div className="flex-1 p-4 bg-white overflow-auto relative">
