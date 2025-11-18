@@ -8,7 +8,7 @@ import React, {
     useRef,
     useState,
 } from "react";
-import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import type {AppState, ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types";
 
 const DEFAULT_SCENE = JSON.stringify(
     {
@@ -1220,7 +1220,12 @@ export function ExcalidrawProvider({
         ) => {
             try {
                 const normalized = coerceSceneInput(scene);
-                excalidrawAPIRef.current?.updateScene(normalized);
+                const { appState, ...rest } = normalized;
+                const compatibleScene = {
+                    ...rest,
+                    appState: appState as Pick<AppState, keyof AppState>,
+                };
+                excalidrawAPIRef.current?.updateScene(compatibleScene);
                 const normalizedString = stringifyScene(normalized);
                 setSceneData(normalizedString);
                 setSceneDraft(null);
