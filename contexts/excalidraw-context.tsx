@@ -1144,9 +1144,9 @@ function normalizeScene(parsed: any) {
                 : { value: 1 },
         viewBackgroundColor: safeColor(appStateRaw.viewBackgroundColor, "#ffffff"),
     };
-    if (appState.collaborators) {
+    /*if (appState.collaborators) {
         delete appState.collaborators;
-    }
+    }*/
 
     const files =
         parsed?.files && typeof parsed.files === "object" ? parsed.files : {};

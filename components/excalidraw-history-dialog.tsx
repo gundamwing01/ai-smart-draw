@@ -20,7 +20,7 @@ export function ExcalidrawHistoryDialog({
     open,
     onOpenChange,
 }: ExcalidrawHistoryDialogProps) {
-    const { history, updateSceneFromAI } = useExcalidraw();
+    const { history, applyScene } = useExcalidraw();
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,7 +42,7 @@ export function ExcalidrawHistoryDialog({
                                 key={entry.id}
                                 className="w-full text-left border rounded-md px-4 py-3 hover:border-primary transition-colors"
                                 onClick={() => {
-                                    updateSceneFromAI(entry.scene, entry.summary, {
+                                    applyScene(entry.scene, entry.summary, {
                                         skipHistory: true,
                                     });
                                     onOpenChange(false);
