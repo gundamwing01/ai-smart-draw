@@ -1,172 +1,176 @@
-# AI Smart Draw
+# AI 智能绘图
 
-An intelligent diagramming application built with Next.js that harnesses the power of AI to create and manipulate various types of diagrams including Draw.io (diagrams.net), Mermaid, PlantUML, Excalidraw, and over 20 other diagram formats through natural language commands.
+[English](README.md) | 中文
 
-🔗 **Live Demo**: 
+一个基于 Next.js 构建的智能绘图应用程序，利用 AI 的强大功能创建和操作各种类型的图表，包括 Draw.io (diagrams.net)、Mermaid、PlantUML、Excalidraw，以及通过自然语言命令支持 20 多种其他图表格式。
+
+🔗 **在线演示**:
+- https://ai-smart-draw.vercel.app/
+
 ![8eb59d07-d285-425b-abf1-6e36a564f481.png](public/8eb59d07-d285-425b-abf1-6e36a564f481.png)
 ![0f218df2-87d0-4f3b-8b67-a2f8a54f4e12.png](public/0f218df2-87d0-4f3b-8b67-a2f8a54f4e12.png)
 ![358e4e3e-7806-406c-b91b-2e65e1e0aba4.png](public/358e4e3e-7806-406c-b91b-2e65e1e0aba4.png)
 ![b04e7f3b-a7e1-45a1-b1f2-60e345fec57e.png](public/b04e7f3b-a7e1-45a1-b1f2-60e345fec57e.png)
 ![f535886a-ffbf-47b0-87d5-dbddc3dd3b6c.png](public/f535886a-ffbf-47b0-87d5-dbddc3dd3b6c.png)
 
-## 🌟 Key Features
+## 🌟 主要功能
 
-- **AI-Powered Diagram Creation**: Transform natural language descriptions into professional diagrams
-- **Multi-Format Support**: Work with Draw.io XML, Mermaid, PlantUML, Excalidraw, and 20+ other formats via Kroki
-- **Intelligent Editing**: Modify existing diagrams through conversational AI prompts
-- **Real-time Preview**: See changes as you interact with the AI
-- **Version History**: Track and restore previous versions of your diagrams
-- **Collapsible Chat Panel**: Expand or collapse the chat interface to maximize workspace
-- **Flexible Rendering**: Multiple rendering options with fallback mechanisms
-- **Model Configuration**: Customize AI models directly from the browser
+- **AI 驱动的图表创建**: 将自然语言描述转换为专业图表
+- **多格式支持**: 支持 Draw.io XML、Mermaid、PlantUML、Excalidraw，以及通过 Kroki 支持 20 多种其他格式
+- **智能编辑**: 通过对话式 AI 提示修改现有图表
+- **实时预览**: 在与 AI 交互时查看更改
+- **版本历史**: 跟踪和恢复图表的先前版本
+- **可折叠聊天面板**: 展开或折叠聊天界面以最大化工作区
+- **灵活渲染**: 具有回退机制的多种渲染选项
+- **模型配置**: 直接从浏览器自定义 AI 模型
 
-## 🎯 Supported Diagram Types
+## 🎯 支持的图表类型
 
 ### Draw.io (diagrams.net)
-Create and edit professional flowcharts, process diagrams, and complex visualizations using AI-powered XML generation and modification.
+使用 AI 驱动的 XML 生成和修改功能创建和编辑专业流程图、过程图和复杂可视化图表。
 
 ### Mermaid
-Generate flowcharts, sequence diagrams, Gantt charts, and more with live SVG previews in a dedicated workspace.
+在专用工作区中生成流程图、序列图、甘特图等，并提供实时 SVG 预览。
 
 ### PlantUML
-Create UML diagrams with a built-in rendering proxy that supports plantuml.com, kroki.io, or custom endpoints.
+内置渲染代理，支持 plantuml.com、kroki.io 或自定义端点创建 UML 图表。
 
 ### Excalidraw
-Freehand-style sketching combined with AI assistance for organic diagram creation.
+结合 AI 辅助的徒手风格绘图，用于有机图表创建。
 
-### Kroki (20+ Formats)
-Generate diagrams in various formats using the kroki.io service with a single interface. Supports:
+### Kroki (20 多种格式)
+使用 kroki.io 服务在各种格式中生成图表，通过单一界面支持：
 
-- **PlantUML**: UML diagrams, activity diagrams, sequence diagrams, etc.
-- **Mermaid**: Flowcharts, sequence diagrams, Gantt charts, etc.
-- **BPMN**: Business Process Modeling Notation for workflow diagrams
-- **Graphviz**: Graph visualization and network diagrams
-- **BlockDiag**: Block diagrams
-- **C4-PlantUML**: Software architecture diagrams
-- **Ditaa**: ASCII art to image conversion
-- **Erd**: Entity relationship diagrams
-- **Vega/Vega-Lite**: Data visualizations
-- **And 15+ more formats**
+- **PlantUML**: UML 图表、活动图、序列图等
+- **Mermaid**: 流程图、序列图、甘特图等
+- **BPMN**: 业务流程建模符号，用于工作流图
+- **Graphviz**: 图形可视化和网络图
+- **BlockDiag**: 方框图
+- **C4-PlantUML**: 软件架构图
+- **Ditaa**: ASCII 艺术到图像转换
+- **Erd**: 实体关系图
+- **Vega/Vega-Lite**: 数据可视化
+- **以及其他 15 多种格式**
 
-## 🛠 How It Works
+## 🛠 工作原理
 
-AI Smart Draw leverages modern web technologies to bridge natural language and diagrammatic representations:
+AI 智能绘图利用现代 Web 技术在自然语言和图表表示之间架起桥梁：
 
-- **Next.js App Router**: Fast, modern React framework with server-side rendering
-- **AI SDK Integration**: Seamless communication with OpenAI-compatible APIs
-- **Context-Aware Prompts**: Intelligent prompt engineering for each diagram type
-- **Real-time Streaming**: Instant feedback with streaming responses
-- **Format-Specific Tools**: Dedicated tools for each diagram format (`display_mermaid`, `display_plantuml`, etc.)
+- **Next.js 应用路由器**: 具有服务器端渲染的快速、现代 React 框架
+- **AI SDK 集成**: 与 OpenAI 兼容 API 的无缝通信
+- **上下文感知提示**: 为每种图表类型设计的智能提示工程
+- **实时流式传输**: 具有流式响应的即时反馈
+- **格式特定工具**: 为每种图表格式设计的专用工具（[display_mermaid]、[display_plantuml] 等）
 
-The application converts your natural language requests into structured diagram code, which is then rendered in real-time.
+应用程序将您的自然语言请求转换为结构化图表代码，然后实时渲染。
 
-## 🚀 Getting Started
+## 🚀 入门指南
 
-### Prerequisites
+### 先决条件
 - Node.js 18+
-- npm or yarn
+- npm 或 yarn
 
-### Installation
+### 安装
 
-1. Clone the repository:
+1. 克隆仓库：
 ```bash
 git clone https://github.com/shenpeiheng/ai-smart-draw.git
 cd ai-smart-draw
 ```
 
-2. Install dependencies:
+2. 安装依赖：
 ```bash
 npm install
-# or
+# 或
 yarn install
 ```
 
-3. Create a `.env.local` file in the root directory. You can use `env.example` as a template:
+3. 在根目录创建 `.env.local` 文件。您可以使用 `env.example` 作为模板：
 ```bash
 cp env.example .env.local
 ```
 
-Then update `.env.local` with your OpenAI credentials.
+然后使用您的 OpenAI 凭据更新 `.env.local`。
 
-### OpenAI Configuration
+### OpenAI 配置
 
-- `OPENAI_API_KEY` (required): Secret key from your OpenAI account.
-- `OPENAI_MODEL` (optional): Defaults to `gpt-4o-mini`, override if you prefer another released variant.
-- `OPENAI_BASE_URL` (optional): Defaults to `https://api.openai.com/v1`; set this if you are self-hosting a proxy or gateway.
+- `OPENAI_API_KEY` (必需): 来自您 OpenAI 账户的密钥
+- `OPENAI_MODEL` (可选): 默认为 `gpt-4o-mini`，如果您喜欢其他已发布的变体可以覆盖
+- `OPENAI_BASE_URL` (可选): 默认为 `https://api.openai.com/v1`；如果您自托管代理或网关，请设置此项
 
-Example snippet:
+示例片段：
 ```bash
 OPENAI_API_KEY="sk-your-key"
 # OPENAI_MODEL="gpt-4o-mini"
 # OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
 
-#### Optional: Configure from the browser
+#### 可选：从浏览器配置
 
-- Click the **模型设置** button in any workspace header to override API Key, Base URL, or model for the current browser. Values are stored in `localStorage` and only sent to the server when you submit a chat request.
-- Leave any field blank to fall back to the server-side environment variables described above.
-- Use the **拉取列表** button to call the `/api/models` helper, which forwards the current credentials to `GET /models` and lists selectable model IDs.
+- 点击任何工作区标题中的 **模型设置** 按钮，覆盖当前浏览器的 API 密钥、基础 URL 或模型。值存储在 `localStorage` 中，仅在您提交聊天请求时发送到服务器
+- 留空任何字段以回退到上述服务器端环境变量
+- 使用 **拉取列表** 按钮调用 `/api/models` 助手，将当前凭据转发到 `GET /models` 并列出可选择的模型 ID
 
-4. Run the development server:
+4. 运行开发服务器：
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-    - `/` -> Draw.io (XML workflows, diagram history, file upload)
-    - `/mermaid` -> Mermaid (live preview + definition card powered by your configured OpenAI-compatible model)
-    - `/plantuml` -> PlantUML (text-based diagrams with remote preview)
-    - `/excalidraw` -> Excalidraw (freeform canvas powered by the same model)
-    - `/kroki` -> Kroki (multi-format diagrams powered by kroki.io)
+5. 在浏览器中打开 [http://localhost:3000](http://localhost:3000) 查看应用程序
+    - `/` -> Draw.io (XML 工作流、图表历史、文件上传)
+    - `/mermaid` -> Mermaid (由您配置的 OpenAI 兼容模型驱动的实时预览 + 定义卡)
+    - `/plantuml` -> PlantUML (具有远程预览的基于文本的图表)
+    - `/excalidraw` -> Excalidraw (由相同模型驱动的自由形式画布)
+    - `/kroki` -> Kroki (由 kroki.io 驱动的多格式图表)
 
-## 🌐 User Interface Features
+## 🌐 用户界面功能
 
-### Collapsible Chat Panel
-- Toggle the chat panel to maximize your workspace
-- When collapsed, a floating button provides quick access to restore the chat panel
-- Smooth animations for a seamless user experience
+### 可折叠聊天面板
+- 切换聊天面板以最大化您的工作区
+- 折叠时，浮动按钮可快速访问以恢复聊天面板
+- 流畅的动画提供无缝用户体验
 
-### Responsive Design
-- Optimized for desktop and laptop usage
-- Mobile-friendly interface with appropriate messaging
+### 响应式设计
+- 针对桌面和笔记本电脑使用进行了优化
+- 移动友好的界面和适当的消息
 
-### Unified Navigation
-- Easy switching between different diagram types
-- Consistent interface across all diagram workspaces
+### 统一导航
+- 在不同图表类型之间轻松切换
+- 所有图表工作区的一致界面
 
-## 🚀 Deployment
+## 🚀 部署
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
+部署 Next.js 应用的最简单方法是使用 Next.js 创建者提供的 [Vercel 平台](https://vercel.com/new)。
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+查看 [Next.js 部署文档](https://nextjs.org/docs/app/building-your-application/deploying)了解更多详情。
 
-Or you can deploy by this button.
+或者您可以使用此按钮进行部署。
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshenpeiheng%2Fai-smart-draw)
 
-## 📁 Project Structure
+## 📁 项目结构
 
 ```
-app/                  # Next.js application routes and pages
-  api/                # API routes for different diagram types
-  [diagram-type]/     # Individual pages for each diagram type
-components/           # React components
-  ui/                 # Reusable UI components
-  [feature]/          # Feature-specific components
-contexts/             # React context providers
-lib/                  # Utility functions and helpers
-public/               # Static assets including example images
+app/                  # Next.js 应用路由和页面
+  api/                # 不同图表类型的 API 路由
+  [diagram-type]/     # 每种图表类型的独立页面
+components/           # React 组件
+  ui/                 # 可重用的 UI 组件
+  [feature]/          # 特定功能的组件
+contexts/             # React 上下文提供者
+lib/                  # 实用函数和助手
+public/               # 静态资源，包括示例图片
 ```
 
-## ✅ TODOs
+## ✅ 待办事项
 
-- [x] Allow the LLM to modify the XML instead of generating it from scratch everytime.
-- [x] Improve the smoothness of shape streaming updates.
-- [x] Add collapsible chat panel for better workspace utilization.
+- [x] 允许 LLM 修改 XML 而不是每次都从头生成
+- [x] 提高形状流式更新的流畅性
+- [x] 添加可折叠聊天面板以更好地利用工作区
 
-## 📄 License
+## 📄 许可证
 
-This project is licensed under the MIT License.
+该项目基于 MIT 许可证。
 
-## ⭐ Star History
+## ⭐ 星标历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=shenpeiheng/ai-smart-draw&type=date&legend=top-left)](https://www.star-history.com/#shenpeiheng/ai-smart-draw&type=date&legend=top-left)
