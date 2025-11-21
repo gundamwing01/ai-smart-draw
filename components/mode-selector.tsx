@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 
-type Mode = "drawio" | "mermaid" | "plantuml" | "excalidraw" | "kroki";
+type Mode = "drawio" | "mermaid" | "plantuml" | "excalidraw" | "kroki" | "graphviz";
 
 const modes: { label: string; value: Mode; href: string }[] = [
   { value: "drawio", label: "Draw.io", href: "/" },
@@ -18,6 +18,7 @@ const modes: { label: string; value: Mode; href: string }[] = [
   { value: "plantuml", label: "PlantUML", href: "/plantuml" },
   { value: "excalidraw", label: "Excalidraw", href: "/excalidraw" },
   { value: "kroki", label: "Kroki", href: "/kroki" },
+  { value: "graphviz", label: "Graphviz", href: "/graphviz" },
 ];
 
 interface ModeSelectorProps {

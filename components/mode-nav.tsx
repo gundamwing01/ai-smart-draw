@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-type Mode = "drawio" | "mermaid" | "plantuml" | "excalidraw" | "kroki";
+type Mode = "drawio" | "mermaid" | "plantuml" | "excalidraw" | "kroki" | "graphviz";
 
 const modes: { label: string; href: string; id: Mode }[] = [
     { id: "drawio", label: "Draw.io", href: "/" },
@@ -11,6 +11,7 @@ const modes: { label: string; href: string; id: Mode }[] = [
     { id: "plantuml", label: "PlantUML", href: "/plantuml" },
     { id: "excalidraw", label: "Excalidraw", href: "/excalidraw" },
     { id: "kroki", label: "Kroki", href: "/kroki" },
+    { id: "graphviz", label: "Graphviz", href: "/graphviz" },
 ];
 
 interface ModeNavProps {
@@ -31,6 +32,8 @@ export function ModeNav({ active, className }: ModeNavProps) {
                 return "bg-orange-500 hover:bg-orange-600 text-white border-orange-600";
             case "kroki":
                 return "bg-indigo-500 hover:bg-indigo-600 text-white border-indigo-600";
+            case "graphviz":
+                return "bg-cyan-500 hover:bg-cyan-600 text-white border-cyan-600";
             default:
                 return "bg-gray-500 hover:bg-gray-600 text-white border-gray-600";
         }

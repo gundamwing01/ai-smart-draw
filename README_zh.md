@@ -122,6 +122,7 @@ npm run dev
     - `/plantuml` -> PlantUML (text-based diagrams with remote preview)
     - `/excalidraw` -> Excalidraw (freeform canvas powered by the same model)
     - `/kroki` -> Kroki (multi-format diagrams powered by kroki.io)
+    - `/graphviz` -> Graphviz (graph visualization diagrams powered by kroki.io)
 
 ## 🌐 User Interface Features
 

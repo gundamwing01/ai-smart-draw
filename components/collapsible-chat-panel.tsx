@@ -8,9 +8,10 @@ import ExcalidrawChatPanel from "@/components/excalidraw-chat-panel";
 import MermaidChatPanel from "@/components/mermaid-chat-panel";
 import PlantUMLChatPanel from "@/components/plantuml-chat-panel";
 import KrokiChatPanel from "@/components/kroki-chat-panel";
+import GraphvizChatPanel from "@/components/graphviz-chat-panel";
 import { cn } from "@/lib/utils";
 
-type PanelType = "drawio" | "excalidraw" | "mermaid" | "plantuml" | "kroki";
+type PanelType = "drawio" | "excalidraw" | "mermaid" | "plantuml" | "kroki" | "graphviz";
 
 interface CollapsibleChatPanelProps {
   type: PanelType;
@@ -41,6 +42,8 @@ export function CollapsibleChatPanel({
         return <PlantUMLChatPanel />;
       case "kroki":
         return <KrokiChatPanel />;
+      case "graphviz":
+        return <GraphvizChatPanel />;
       default:
         return <ChatPanel />;
     }

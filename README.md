@@ -38,6 +38,9 @@
 ### Excalidraw
 结合 AI 辅助的徒手风格绘图，用于有机图表创建。
 
+### Graphviz
+使用 DOT 语言语法创建图形图表。Graphviz 通过 kroki.io 服务提供支持，该服务提供强大的图形可视化功能。
+
 ### Kroki (20 多种格式)
 使用 kroki.io 服务在各种格式中生成图表，通过单一界面支持：
 
@@ -122,6 +125,7 @@ npm run dev
     - `/plantuml` -> PlantUML (具有远程预览的基于文本的图表)
     - `/excalidraw` -> Excalidraw (由相同模型驱动的自由形式画布)
     - `/kroki` -> Kroki (由 kroki.io 驱动的多格式图表)
+    - `/graphviz` -> Graphviz (由 kroki.io 驱动的图形可视化图表)
 
 ## 🌐 用户界面功能
 
