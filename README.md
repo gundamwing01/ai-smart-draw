@@ -1,6 +1,6 @@
 # AI 智能绘图
 
-[English](README.md) | 中文
+[English](README_en.md) | 中文
 
 一个基于 Next.js 构建的智能绘图应用程序，利用 AI 的强大功能创建和操作各种类型的图表，包括 Draw.io (diagrams.net)、Mermaid、PlantUML、Excalidraw，以及通过自然语言命令支持 20 多种其他图表格式。
 

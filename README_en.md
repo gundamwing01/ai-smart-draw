@@ -1,6 +1,6 @@
 # AI Smart Draw
 
-English | [中文](README_zh.md)
+English | [中文](README.md)
 
 An intelligent diagramming application built with Next.js that harnesses the power of AI to create and manipulate various types of diagrams including Draw.io (diagrams.net), Mermaid, PlantUML, Excalidraw, and over 20 other diagram formats through natural language commands.
 
