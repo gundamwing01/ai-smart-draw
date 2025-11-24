@@ -73,7 +73,8 @@ export function ChatMessageDisplay({
                             // For streaming input, always update to show streaming
                             if (
                                 state === "input-streaming" ||
-                                state === "input-available"
+                                state === "input-available" ||
+                                state === "output-streaming"
                             ) {
                                 handleDisplayChart(part.input.xml);
                             }
@@ -83,6 +84,20 @@ export function ChatMessageDisplay({
                                 !processedToolCalls.current.has(toolCallId)
                             ) {
                                 handleDisplayChart(part.input.xml);
+                                processedToolCalls.current.add(toolCallId);
+                            }
+                        }
+                        
+                        // Handle edit_diagram tool
+                        if (
+                            part.type === "tool-edit_diagram" &&
+                            part.input?.edits
+                        ) {
+                            // For edit_diagram, we only care about the final output
+                            if (
+                                state === "output-available" &&
+                                !processedToolCalls.current.has(toolCallId)
+                            ) {
                                 processedToolCalls.current.add(toolCallId);
                             }
                         }

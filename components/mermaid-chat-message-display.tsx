@@ -61,7 +61,12 @@ export function MermaidChatMessageDisplay({
                     part.type === "tool-display_mermaid" &&
                     part.input?.definition
                 ) {
-                    if (
+                    if (state === "input-streaming") {
+                        handleDisplayMermaid(
+                            part.input.definition,
+                            part.input.summary
+                        );
+                    } else if (
                         state === "output-available" &&
                         !processedToolCalls.current.has(toolCallId)
                     ) {

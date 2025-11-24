@@ -28,9 +28,8 @@ export function GraphvizChatMessageDisplay({
         {}
     );
 
-    const handleDisplayGraphviz = useCallback(
+    const handleDisplay = useCallback(
         (definition: string, summary?: string) => {
-            if (!definition?.trim()) return;
             updateDefinition(definition, summary);
         },
         [updateDefinition]
@@ -62,18 +61,18 @@ export function GraphvizChatMessageDisplay({
                     part.input?.definition
                 ) {
                     if (state === "input-streaming") {
-                        handleDisplayGraphviz(part.input.definition, part.input.summary);
+                        handleDisplay(part.input.definition, part.input.summary);
                     } else if (
                         state === "output-available" &&
                         !processedToolCalls.current.has(toolCallId)
                     ) {
-                        handleDisplayGraphviz(part.input.definition, part.input.summary);
+                        handleDisplay(part.input.definition, part.input.summary);
                         processedToolCalls.current.add(toolCallId);
                     }
                 }
             });
         });
-    }, [messages, handleDisplayGraphviz]);
+    }, [messages, handleDisplay]);
 
     const renderToolPart = (part: any) => {
         const callId = part.toolCallId;

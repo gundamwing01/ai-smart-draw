@@ -28,10 +28,9 @@ export function KrokiChatMessageDisplay({
         {}
     );
 
-    const handleDisplayKroki = useCallback(
-        (definition: string, summary?: string, diagramType?: string) => {
-            if (!definition?.trim()) return;
-            updateDefinition(definition, summary, diagramType);
+    const handleDisplay = useCallback(
+        (definition: string, summary?: string) => {
+            updateDefinition(definition, summary);
         },
         [updateDefinition]
     );
@@ -61,21 +60,19 @@ export function KrokiChatMessageDisplay({
                     part.type === "tool-display_kroki" &&
                     part.input?.definition
                 ) {
-                    if (
+                    if (state === "input-streaming") {
+                        handleDisplay(part.input.definition, part.input.summary);
+                    } else if (
                         state === "output-available" &&
                         !processedToolCalls.current.has(toolCallId)
                     ) {
-                        handleDisplayKroki(
-                            part.input.definition,
-                            part.input.summary,
-                            part.input.diagramType
-                        );
+                        handleDisplay(part.input.definition, part.input.summary);
                         processedToolCalls.current.add(toolCallId);
                     }
                 }
             });
         });
-    }, [messages, handleDisplayKroki]);
+    }, [messages, handleDisplay]);
 
     const renderToolPart = (part: any) => {
         const callId = part.toolCallId;

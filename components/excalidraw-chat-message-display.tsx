@@ -51,44 +51,54 @@ export function ExcalidrawChatMessageDisplay({
                     }));
                 }
 
-                if (part.type === "tool-display_excalidraw") {
-                    const scenePayload = part.input?.scene;
-                    if (!scenePayload) {
-                        return;
-                    }
-                    const serializedScene =
-                        typeof scenePayload === "string"
-                            ? scenePayload
-                            : JSON.stringify(scenePayload, null, 2);
-
+                if (
+                    part.type === "tool-display_excalidraw" &&
+                    part.input?.scene
+                ) {
+                    // Handle streaming updates
                     if (state === "input-streaming") {
-                        // Throttle draft updates to reduce UI jank
-                        draftBufferRef.current = serializedScene;
-                        if (!draftFlushTimer.current) {
-                            draftFlushTimer.current = setTimeout(() => {
-                                if (draftBufferRef.current) {
-                                    setSceneDraft(draftBufferRef.current);
-                                }
-                                draftFlushTimer.current = null;
-                            }, 200);
+                        // Buffer streaming updates to reduce frequency
+                        draftBufferRef.current = part.input.scene;
+                        
+                        // Clear existing timer
+                        if (draftFlushTimer.current) {
+                            clearTimeout(draftFlushTimer.current);
                         }
-                    } else if (
+                        
+                        // Set new timer to flush buffer
+                        draftFlushTimer.current = setTimeout(() => {
+                            if (draftBufferRef.current) {
+                                setSceneDraft(draftBufferRef.current);
+                                draftBufferRef.current = null;
+                            }
+                        }, 100); // Flush every 100ms
+                    } 
+                    // Handle final output
+                    else if (
                         state === "output-available" &&
                         !processedToolCalls.current.has(toolCallId)
                     ) {
-                        // apply final scene to canvas; clear draft buffer
+                        // Clear any pending buffer flush
                         if (draftFlushTimer.current) {
                             clearTimeout(draftFlushTimer.current);
                             draftFlushTimer.current = null;
                         }
-                        draftBufferRef.current = null;
-                        setSceneDraft(null);
-                        applyScene(scenePayload, part.input.summary);
+                        
+                        // Apply the final scene
+                        applyScene(part.input.scene, part.input.summary || "AI generated scene");
                         processedToolCalls.current.add(toolCallId);
+                        draftBufferRef.current = null;
                     }
                 }
             });
         });
+        
+        // Clean up timer on unmount
+        return () => {
+            if (draftFlushTimer.current) {
+                clearTimeout(draftFlushTimer.current);
+            }
+        };
     }, [messages, applyScene, setSceneDraft]);
 
     const renderToolPart = (part: any) => {
