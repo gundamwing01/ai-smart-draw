@@ -95,7 +95,7 @@ export function ChatMessageDisplay({
     const renderToolPart = (part: any) => {
         const callId = part.toolCallId;
         const { state, input, output } = part;
-        const isExpanded = expandedTools[callId] ?? true;
+        const isExpanded = expandedTools[callId] ?? false;
         const toolName = part.type?.replace("tool-", "");
 
         const toggleExpanded = () => {
@@ -123,7 +123,7 @@ export function ChatMessageDisplay({
                         )}
                     </div>
                     {input && isExpanded && (
-                        <div className="mt-1 font-mono text-xs overflow-hidden">
+                        <div className="mt-1 font-mono text-xs overflow-x-auto">
                             {typeof input === "object" &&
                                 Object.keys(input).length > 0 &&
                                 `Input: ${JSON.stringify(input, null, 2)}`}
@@ -168,17 +168,23 @@ export function ChatMessageDisplay({
                         }`}
                     >
                         <div
-                            className={`inline-block px-4 py-2 whitespace-pre-wrap text-sm rounded-lg max-w-[85%] break-words ${
+                            className={`inline-block px-4 py-2 text-sm rounded-lg max-w-[300px] overflow-x-auto ${
                                 message.role === "user"
                                     ? "bg-primary text-primary-foreground"
                                     : "bg-muted text-muted-foreground"
                             }`}
+                            style={{ maxWidth: "300px" }}
                         >
                             {message.parts?.map((part: any, index: number) => {
                                 switch (part.type) {
                                     case "text":
                                         return (
-                                            <div key={index}>{part.text}</div>
+                                            <div 
+                                                key={index} 
+                                                className="whitespace-pre-wrap break-all"
+                                            >
+                                                {part.text}
+                                            </div>
                                         );
                                     case "file":
                                         return (

@@ -77,7 +77,7 @@ export function PlantUMLChatMessageDisplay({
     const renderToolPart = (part: any) => {
         const callId = part.toolCallId;
         const { state, input, output } = part;
-        const isExpanded = expandedTools[callId] ?? true;
+        const isExpanded = expandedTools[callId] ?? false;
 
         return (
             <div
@@ -97,12 +97,12 @@ export function PlantUMLChatMessageDisplay({
                                 }
                                 className="text-xs text-gray-500 hover:text-gray-700"
                             >
-                                {isExpanded ? "Hide Args" : "Show Args"}
+                                {isExpanded ? "隐藏" : "显示"}
                             </button>
                         )}
                     </div>
                     {input && isExpanded && (
-                        <div className="mt-1 font-mono text-xs overflow-hidden">
+                        <div className="mt-1 font-mono text-xs overflow-x-auto">
                             {typeof input === "object" &&
                                 Object.keys(input).length > 0 &&
                                 `Input: ${JSON.stringify(input, null, 2)}`}
