@@ -34,7 +34,7 @@ export default function KrokiChatPanel() {
                     addToolResult({
                         tool: "display_kroki",
                         toolCallId: toolCall.toolCallId,
-                        output: "Diagram updated.",
+                        output: "生成完成.",
                     });
                 }
             },

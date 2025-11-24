@@ -34,7 +34,7 @@ export default function ExcalidrawChatPanel() {
                     addToolResult({
                         tool: "display_excalidraw",
                         toolCallId: toolCall.toolCallId,
-                        output: "Canvas updated",
+                        output: "生成完成.",
                     });
                 }
             },

@@ -33,7 +33,7 @@ export default function GraphvizChatPanel() {
                     addToolResult({
                         tool: "display_graphviz",
                         toolCallId: toolCall.toolCallId,
-                        output: "Diagram updated.",
+                        output: "生成完成.",
                     });
                 }
             },

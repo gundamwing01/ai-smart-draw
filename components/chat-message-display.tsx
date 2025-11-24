@@ -112,7 +112,7 @@ export function ChatMessageDisplay({
             >
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">
-                        <div className="text-xs">Tool: {toolName}</div>
+                        <div className="text-xs">工具: {toolName}</div>
                         {input && Object.keys(input).length > 0 && (
                             <button
                                 onClick={toggleExpanded}
@@ -130,8 +130,11 @@ export function ChatMessageDisplay({
                         </div>
                     )}
                     <div className="mt-2 text-sm">
-                        {state === "input-streaming" ? (
-                            <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        {state === "input-streaming" || state === "output-streaming" ? (
+                            <div className="flex items-center text-blue-600">
+                                <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2" />
+                                {state === "output-streaming" ? "正在生成..." : "正在生成..."}
+                            </div>
                         ) : state === "output-available" ? (
                             <div className="text-green-600">
                                 {output || (toolName === "display_diagram"

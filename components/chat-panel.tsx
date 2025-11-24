@@ -73,7 +73,7 @@ export default function ChatPanel() {
                     addToolResult({
                         tool: "display_diagram",
                         toolCallId: toolCall.toolCallId,
-                        output: "Successfully displayed the diagram.",
+                        output: "生成完成.",
                     });
                 } else if (toolCall.toolName === "edit_diagram") {
                     const { edits } = toolCall.input as {

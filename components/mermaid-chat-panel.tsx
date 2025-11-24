@@ -34,7 +34,7 @@ export default function MermaidChatPanel() {
                     addToolResult({
                         tool: "display_mermaid",
                         toolCallId: toolCall.toolCallId,
-                        output: "Mermaid diagram updated.",
+                        output: "生成完成.",
                     });
                 }
             },

@@ -34,7 +34,7 @@ export default function PlantUMLChatPanel() {
                     addToolResult({
                         tool: "display_plantuml",
                         toolCallId: toolCall.toolCallId,
-                        output: "PlantUML updated",
+                        output: "生成完成.",
                     });
                 }
             },
