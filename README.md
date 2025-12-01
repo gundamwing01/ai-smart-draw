@@ -7,11 +7,12 @@
 🔗 **在线演示**:
 - https://ai-smart-draw.vercel.app/
 
-![8eb59d07-d285-425b-abf1-6e36a564f481.png](public/8eb59d07-d285-425b-abf1-6e36a564f481.png)
-![0f218df2-87d0-4f3b-8b67-a2f8a54f4e12.png](public/0f218df2-87d0-4f3b-8b67-a2f8a54f4e12.png)
-![358e4e3e-7806-406c-b91b-2e65e1e0aba4.png](public/358e4e3e-7806-406c-b91b-2e65e1e0aba4.png)
-![b04e7f3b-a7e1-45a1-b1f2-60e345fec57e.png](public/b04e7f3b-a7e1-45a1-b1f2-60e345fec57e.png)
-![f535886a-ffbf-47b0-87d5-dbddc3dd3b6c.png](public/f535886a-ffbf-47b0-87d5-dbddc3dd3b6c.png)
+![de5e647f-a83a-4b28-bd56-b449f587e472.png](public/de5e647f-a83a-4b28-bd56-b449f587e472.png)
+![01669c29-60a7-4777-af14-0982d6c6daa8.png](public/01669c29-60a7-4777-af14-0982d6c6daa8.png)
+![409fd263-800f-4183-8df9-71691307633c.png](public/409fd263-800f-4183-8df9-71691307633c.png)
+![6dd5b5c1-1e25-4d33-a45f-d10eb0fbb804.png](public/6dd5b5c1-1e25-4d33-a45f-d10eb0fbb804.png)
+![7736141c-e820-450d-8260-5f5b0c846388.png](public/7736141c-e820-450d-8260-5f5b0c846388.png)
+![e59f7980-ac2f-4c57-b9a7-8b7c75feed58.png](public/e59f7980-ac2f-4c57-b9a7-8b7c75feed58.png)
 
 ## 🌟 主要功能
 
