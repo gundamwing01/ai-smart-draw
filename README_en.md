@@ -149,6 +149,23 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Or you can deploy by this button.
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshenpeiheng%2Fai-smart-draw)
 
+## Deploy to Cloudflare Pages
+
+1) Build the Cloudflare bundle (OpenNext adapter):
+```bash
+npm install
+npm run build:cloudflare
+```
+2) Set runtime environment variables in the Cloudflare Dashboard or via `wrangler secret put`:
+    - Required: `OPENAI_API_KEY`
+    - Optional: `OPENAI_MODEL`, `OPENAI_BASE_URL`, `OPENAI_MAX_OUTPUT_TOKENS`, `PLANTUML_RENDER_BASE`, `KROKI_RENDER_BASE`
+3) Deploy:
+```bash
+wrangler pages deploy .open-next
+```
+`wrangler.toml` already enables `nodejs_compat` and points Wrangler to the `.open-next` output. To target Workers instead of Pages, switch `cloudflare.pages` to `cloudflare.workers` in `open-next.config.ts`, and add `main = ".open-next/worker.js"` to `wrangler.toml`.
+
+
 ## 📁 Project Structure
 
 ```

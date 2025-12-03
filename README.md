@@ -152,6 +152,23 @@ npm run dev
 或者您可以使用此按钮进行部署。
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshenpeiheng%2Fai-smart-draw)
 
+## 部署到 Cloudflare Pages
+
+1. 构建 Cloudflare 版本（使用 OpenNext 适配器）：
+```bash
+npm install
+npm run build:cloudflare
+```
+2. 在 Cloudflare Dashboard（或使用 `wrangler secret put`）设置运行时环境变量，至少需要：
+    - `OPENAI_API_KEY`（必需）
+    - 其他可选：`OPENAI_MODEL`、`OPENAI_BASE_URL`、`OPENAI_MAX_OUTPUT_TOKENS`、`PLANTUML_RENDER_BASE`、`KROKI_RENDER_BASE`
+3. 部署：
+```bash
+wrangler pages deploy .open-next
+```
+`wrangler.toml` 已启用 `nodejs_compat` 并指向 `.open-next` 产物。若想改为 Workers 部署，可在 `open-next.config.ts` 将 `cloudflare.pages` 切换为 `cloudflare.workers`，并在 `wrangler.toml` 添加 `main = ".open-next/worker.js"`。
+
+
 ## 📁 项目结构
 
 ```
