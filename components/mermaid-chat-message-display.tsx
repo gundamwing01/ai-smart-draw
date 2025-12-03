@@ -137,6 +137,25 @@ export function MermaidChatMessageDisplay({
         );
     };
 
+    // New function to render an immediate tool preview when user sends a message
+    const renderImmediateToolPreview = () => {
+        return (
+            <div className="p-4 my-2 text-gray-500 border border-gray-300 rounded" style={{ maxWidth: "300px" }}>
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                        <div className="text-xs">工具: send_message</div>
+                    </div>
+                    <div className="mt-2 text-sm">
+                        <div className="flex items-center text-blue-600">
+                            <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2" />
+                            正在思考中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <ScrollArea className="h-full pr-4">
             {messages.length === 0 ? (
@@ -150,11 +169,12 @@ export function MermaidChatMessageDisplay({
                         }`}
                     >
                         <div
-                            className={`inline-block px-4 py-2 whitespace-pre-wrap text-sm rounded-lg max-w-[85%] break-words ${
+                            className={`inline-block px-4 py-2 text-sm rounded-lg max-w-[300px] overflow-x-auto ${
                                 message.role === "user"
                                     ? "bg-primary text-primary-foreground"
-                                    : "bg-muted text-muted-foreground"
+                                    : "bg-muted text-muted-foreground w-full"
                             }`}
+                            style={{ maxWidth: "300px" }}
                         >
                             {message.parts?.map((part: any, index: number) => {
                                 switch (part.type) {
@@ -185,6 +205,10 @@ export function MermaidChatMessageDisplay({
                                 }
                             })}
                         </div>
+                        {/* Show immediate tool preview for the last user message */}
+                        {message.role === "user" &&
+                            messages[messages.length - 1]?.id === message.id &&
+                            renderImmediateToolPreview()}
                     </div>
                 ))
             )}
