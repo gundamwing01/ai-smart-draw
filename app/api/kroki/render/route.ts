@@ -120,10 +120,17 @@ function detectActualDiagramType(definition: string, defaultType: string): strin
 
 function encodeDiagram(definition: string): string {
     // Encode in deflate + base64 format as expected by Kroki
-    const zlib = require('zlib');
-    const buffer = Buffer.from(definition, 'utf8');
-    const compressed = zlib.deflateSync(buffer);
-    return Buffer.from(compressed).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
+    const textEncoder = new TextEncoder();
+    const data = textEncoder.encode(definition);
+    const compressed = new Response(
+    new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))
+  ).arrayBuffer();
+   const result = Buffer.from(await compressed).toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  return result;
 }
 
 export async function POST(request: NextRequest) {
@@ -153,9 +160,9 @@ export async function POST(request: NextRequest) {
         ? diagramType
         : detectDiagramType(definition);
 
-    const encoded = encodeDiagram(definition);
+    const encoded = await encodeDiagram(diagramDefinition);
     const renderer = DEFAULT_RENDERER;
-    const url = `${renderer}/${finalDiagramType}/svg/${encoded}`;
+    const url = `https://kroki.io/${type}/svg/${encoded}`;
 
     try {
         const response = await fetch(url, {
