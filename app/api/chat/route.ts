@@ -187,3 +187,4 @@ IMPORTANT: Keep edits concise:
     );
   }
 }
+export const runtime = 'edge'
