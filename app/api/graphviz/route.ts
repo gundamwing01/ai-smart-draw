@@ -128,3 +128,4 @@ ${lastMessageText}
         );
     }
 }
+export const runtime = 'edge'
