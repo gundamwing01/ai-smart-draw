@@ -3,6 +3,9 @@
 import {Buffer} from "node:buffer";
 import {NextRequest, NextResponse} from "next/server";
 
+export const runtime = 'edge'
+export const maxDuration = 60;
+
 // Default to kroki.io
 const DEFAULT_RENDERER = process.env.KROKI_RENDER_BASE?.replace(/\/$/, "") || "http://vg.007988.xyz:8000";
 
@@ -198,4 +201,3 @@ export async function POST(request: NextRequest) {
         );
     }
 }
-export const runtime = 'edge'
