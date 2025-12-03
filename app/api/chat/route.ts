@@ -2,6 +2,7 @@ import { streamText, convertToModelMessages } from 'ai';
 import { z } from "zod/v3";
 import { resolveModel } from "@/lib/model-provider";
 
+export const runtime = 'edge'
 export const maxDuration = 60
 
 export async function POST(req: Request) {
@@ -187,4 +188,3 @@ IMPORTANT: Keep edits concise:
     );
   }
 }
-export const runtime = 'edge'
