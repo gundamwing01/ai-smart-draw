@@ -52,3 +52,4 @@ export default function ExcalidrawPage() {
         </ExcalidrawProvider>
     );
 }
+export const runtime = 'edge'
