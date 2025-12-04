@@ -1,54 +1,37 @@
-"use client";
+// app/excalidraw/page.tsx
+'use client'
 
-import React, { useEffect, useState } from "react";
-import { ExcalidrawProvider } from "@/contexts/excalidraw-context";
-import { ExcalidrawWorkspace } from "@/components/excalidraw-workspace";
-import { CollapsibleChatPanel } from "@/components/collapsible-chat-panel";
-import { ExcalidrawHistoryDialog } from "@/components/excalidraw-history-dialog";
+import { useState, useCallback } from 'react'
+import Excalidraw from '@excalidraw/excalidraw'
+import type { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types'
+import type { AppState } from '@excalidraw/excalidraw/types/types'
 
 export default function ExcalidrawPage() {
-    const [isMobile, setIsMobile] = useState(false);
-    const [showHistory, setShowHistory] = useState(false);
-    const [isChatCollapsed, setIsChatCollapsed] = useState(false);
+  const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null)
+  const [sceneData, setSceneData] = useState<any>({
+    elements: [],
+    appState: { viewBackgroundColor: '#a5d8ff' },
+  })
 
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
+  // 实时监听画布变化 → 发送给 AI（可选）
+  const handleChange = useCallback((
+    elements: readonly ExcalidrawElement[],
+    appState: AppState
+  ) => {
+    if (!excalidrawAPI) return
+    // 你可以在这里把场景数据发给 AI 分析
+    console.log('Excalidraw changed:', { elements, appState })
+  }, [excalidrawAPI])
 
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
-
-    if (isMobile) {
-        return (
-            <div className="flex items-center justify-center h-screen bg-gray-100">
-                <div className="text-center p-8">
-                    <h1 className="text-2xl font-semibold text-gray-800">
-                        Please open this application on a desktop or laptop
-                    </h1>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <ExcalidrawProvider>
-            <div className="flex h-screen bg-gray-100 overflow-hidden">
-                <div className={`h-full p-1 transition-all duration-300 ${isChatCollapsed ? 'w-full' : 'w-3/4'}`}>
-                    <ExcalidrawWorkspace
-                        onRequestHistory={() => setShowHistory(true)}
-                    />
-                </div>
-                <div className={`h-full p-1 transition-all duration-300 ${isChatCollapsed ? 'w-0' : 'w-1/4'}`}>
-                    <CollapsibleChatPanel type="excalidraw" onCollapseChange={setIsChatCollapsed} />
-                </div>
-                <ExcalidrawHistoryDialog
-                    open={showHistory}
-                    onOpenChange={setShowHistory}
-                />
-            </div>
-        </ExcalidrawProvider>
-    );
+  return (
+    <div className="h-screen w-full">
+      <Excalidraw
+        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        onChange={handleChange}
+        initialData={sceneData}
+        theme="light"
+        langCode="zh-CN"
+      />
+    </div>
+  )
 }
