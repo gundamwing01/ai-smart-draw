@@ -3,7 +3,6 @@ import { z } from "zod/v3";
 import { resolveModel } from "@/lib/model-provider";
 
 export const maxDuration = 60;
-export const runtime = "edge";
 
 export async function POST(req: Request) {
     try {

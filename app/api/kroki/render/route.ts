@@ -1,7 +1,7 @@
-import pako from "pako";
-import { NextRequest, NextResponse } from "next/server";
+"use server";
 
-export const runtime = "edge";
+import {Buffer} from "node:buffer";
+import {NextRequest, NextResponse} from "next/server";
 
 // Default to kroki.io
 const DEFAULT_RENDERER = process.env.KROKI_RENDER_BASE?.replace(/\/$/, "") || "http://vg.007988.xyz:8000";
@@ -119,14 +119,10 @@ function detectActualDiagramType(definition: string, defaultType: string): strin
 
 function encodeDiagram(definition: string): string {
     // Encode in deflate + base64 format as expected by Kroki
-    try {
-        const buffer = Buffer.from(definition, 'utf8');
-        const compressed = pako.deflate(buffer);
-        return Buffer.from(compressed).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-    } catch (error) {
-        // Fallback to simple base64 encoding
-        return Buffer.from(definition, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-    }
+    const zlib = require('zlib');
+    const buffer = Buffer.from(definition, 'utf8');
+    const compressed = zlib.deflateSync(buffer);
+    return Buffer.from(compressed).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
 export async function POST(request: NextRequest) {
@@ -160,7 +156,6 @@ export async function POST(request: NextRequest) {
     const renderer = DEFAULT_RENDERER;
     const url = `${renderer}/${finalDiagramType}/svg/${encoded}`;
 
-    // Also try the text format which might be more reliable
     try {
         const response = await fetch(url, {
             method: 'GET',

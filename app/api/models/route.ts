@@ -1,5 +1,4 @@
 export const maxDuration = 30;
-export const runtime = "edge";
 
 interface ModelListResponse {
     id: string;
