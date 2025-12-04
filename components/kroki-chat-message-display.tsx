@@ -141,7 +141,7 @@ export function KrokiChatMessageDisplay({
                     <div className="mt-2 text-sm">
                         <div className="flex items-center text-blue-600">
                             <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2" />
-                            正在思考中...
+                            正在努力生成回答请稍候...
                         </div>
                     </div>
                 </div>

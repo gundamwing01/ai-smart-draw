@@ -8,13 +8,13 @@ A draw.io XML file has the following hierarchy:
 
 ```xml
 <mxfile>
-  <diagram>
-    <mxGraphModel>
-      <root>
-        <mxCell /> <!-- Cells that make up the diagram -->
-      </root>
-    </mxGraphModel>
-  </diagram>
+    <diagram>
+        <mxGraphModel>
+            <root>
+                <mxCell /> <!-- Cells that make up the diagram -->
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
 ```
 
@@ -87,10 +87,10 @@ Contains all the cells in the diagram.
 
 ```xml
 <root>
-<mxCell id="0"/>
-<mxCell id="1" parent="0"/>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
 
-  <!-- Other cells go here -->
+    <!-- Other cells go here -->
 </root>
 ```
 
@@ -120,7 +120,7 @@ The basic building block of diagrams. Cells represent shapes, connectors, text, 
 
 ```xml
 <mxCell id="2" value="Hello World" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-  <mxGeometry x="350" y="190" width="120" height="60" as="geometry"/>
+    <mxGeometry x="350" y="190" width="120" height="60" as="geometry"/>
 </mxCell>
 ```
 
@@ -128,10 +128,10 @@ The basic building block of diagrams. Cells represent shapes, connectors, text, 
 
 ```xml
 <mxCell id="3" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="2" target="4">
-  <mxGeometry width="50" height="50" relative="1" as="geometry">
-    <mxPoint x="400" y="430" as="sourcePoint"/>
-    <mxPoint x="450" y="380" as="targetPoint"/>
-  </mxGeometry>
+    <mxGeometry width="50" height="50" relative="1" as="geometry">
+        <mxPoint x="400" y="430" as="sourcePoint"/>
+        <mxPoint x="450" y="380" as="targetPoint"/>
+    </mxGeometry>
 </mxCell>
 ```
 
@@ -162,8 +162,8 @@ Defines the position and dimensions of cells.
 
 ```xml
 <mxGeometry width="50" height="50" relative="1" as="geometry">
-  <mxPoint x="400" y="430" as="sourcePoint"/>
-  <mxPoint x="450" y="380" as="targetPoint"/>
+    <mxPoint x="400" y="430" as="sourcePoint"/>
+    <mxPoint x="450" y="380" as="targetPoint"/>
 </mxGeometry>
 ```
 
@@ -211,6 +211,7 @@ Draw.io files contain two special cells that are always present:
 4.  Define parent relationships correctly
 5.  Use `mxGeometry` elements to position shapes
 6.  For connectors, specify `source` and `target` attributes
+7.  **CRITICAL: All mxCell elements must be DIRECT children of `<root>`. NEVER nest mxCell inside another mxCell.**
 
 ## Common Patterns
 
@@ -234,12 +235,33 @@ To group elements, create a parent cell and set other cells' `parent` attribute 
 
 ### Swimlanes
 
-Swimlanes use the `swimlane` shape style:
+Swimlanes use the `swimlane` shape style. **IMPORTANT: All mxCell elements (swimlanes, steps, and edges) must be siblings under `<root>`. Edges are NOT nested inside swimlanes or steps.**
 
 ```xml
-<mxCell id="20" value="Swimlane 1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-  <mxGeometry x="200" y="200" width="140" height="120" as="geometry" />
-</mxCell>
+<root>
+  <mxCell id="0"/>
+  <mxCell id="1" parent="0"/>
+  <!-- Swimlane 1 -->
+  <mxCell id="lane1" value="Frontend" style="swimlane;startSize=30;" vertex="1" parent="1">
+    <mxGeometry x="40" y="40" width="200" height="300" as="geometry"/>
+  </mxCell>
+  <!-- Swimlane 2 -->
+  <mxCell id="lane2" value="Backend" style="swimlane;startSize=30;" vertex="1" parent="1">
+    <mxGeometry x="280" y="40" width="200" height="300" as="geometry"/>
+  </mxCell>
+  <!-- Step inside lane1 (parent="lane1") -->
+  <mxCell id="step1" value="Send Request" style="rounded=1;" vertex="1" parent="lane1">
+    <mxGeometry x="20" y="60" width="160" height="40" as="geometry"/>
+  </mxCell>
+  <!-- Step inside lane2 (parent="lane2") -->
+  <mxCell id="step2" value="Process" style="rounded=1;" vertex="1" parent="lane2">
+    <mxGeometry x="20" y="60" width="160" height="40" as="geometry"/>
+  </mxCell>
+  <!-- Edge connecting step1 to step2 (sibling element, NOT nested inside steps) -->
+  <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;" edge="1" parent="1" source="step1" target="step2">
+    <mxGeometry relative="1" as="geometry"/>
+  </mxCell>
+</root>
 ```
 
 ### Tables
