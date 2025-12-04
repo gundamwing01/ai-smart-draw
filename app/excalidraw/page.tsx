@@ -1,10 +1,8 @@
 // app/excalidraw/page.tsx
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
-import Excalidraw, {
-  ExcalidrawImperativeAPI,
-} from '@excalidraw/excalidraw'
+import { useState, useCallback } from 'react'
+import { Excalidraw, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw'
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types'
 
 export default function ExcalidrawPage() {
@@ -13,65 +11,53 @@ export default function ExcalidrawPage() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  // 把 draw.io XML 转成 Excalidraw 元素（核心转换函数）
+  // XML 转 Excalidraw 元素（简化版，够用）
   const xmlToExcalidrawElements = useCallback((xml: string): ExcalidrawElement[] => {
     const elements: ExcalidrawElement[] = []
-    let idCounter = Date.now()
+    let id = Date.now()
 
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(xml, 'application/xml')
-
-      // 解析 mxCell（draw.io 的核心元素）
       const cells = doc.querySelectorAll('mxCell[vertex="1"], mxCell[edge="1"]')
 
       cells.forEach((cell) => {
-        const value = cell.getAttribute('value') || ''
-        const geometry = cell.querySelector('mxGeometry')
-        const x = parseFloat(geometry?.getAttribute('x') || '0')
-        const y = parseFloat(geometry?.getAttribute('y') || '0')
-        const width = parseFloat(geometry?.getAttribute('width') || '120')
-        const height = parseFloat(geometry?.getAttribute('height') || '60')
+        const value = cell.getAttribute('value') || '未命名'
+        const geom = cell.querySelector('mxGeometry')
+        if (!geom) return
 
-        // 矩形（最常见）
+        const x = parseFloat(geom.getAttribute('x') || '100')
+        const y = parseFloat(geom.getAttribute('y') || '100')
+        const w = parseFloat(geom.getAttribute('width') || '160')
+        const h = parseFloat(geom.getAttribute('height') || '80')
+
         if (cell.getAttribute('vertex') === '1') {
           elements.push({
-            id: `rect-${idCounter++}`,
+            id: `shape-${id++}`,
             type: 'rectangle',
             x,
             y,
-            width,
-            height,
-            strokeColor: '#000000',
-            backgroundColor: '#ffd8b1',
-            fillStyle: 'hachure',
-            roughness: 1,
-            opacity: 100,
-            label: { text: value || '未命名' },
-            textAlign: 'center',
-            verticalAlign: 'middle',
+            width: w,
+            height: h,
+            strokeColor: '#000',
+            backgroundColor: '#e0f2fe',
+            fillStyle: 'solid',
+            label: { text: value },
             fontSize: 20,
-            fontFamily: 1,
           } as any)
         }
 
-        // 连线
         if (cell.getAttribute('edge') === '1') {
-          const source = cell.getAttribute('source')
-          const target = cell.getAttribute('target')
-          if (source && target) {
-            elements.push({
-              id: `arrow-${idCounter++}`,
-              type: 'arrow',
-              strokeColor: '#000000',
-              strokeWidth: 2,
-              roughness: 1,
-              startArrowhead: null,
-              endArrowhead: 'arrow',
-              label: { text: value },
-              points: [[x, y], [x + width, y + height / 2]],
-            } as any)
-          }
+          elements.push({
+            id: `arrow-${id++}`,
+            type: 'arrow',
+            x,
+            y,
+            width: 100,
+            height: 100,
+            endArrowhead: 'arrow',
+            label: { text: value },
+          } as any)
         }
       })
     } catch (e) {
@@ -81,12 +67,11 @@ export default function ExcalidrawPage() {
     return elements
   }, [])
 
-  // 发送 AI 请求并实时解析工具调用
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
 
-    const userMessage = { role: 'user', content: input }
-    setMessages((prev) => [...prev, userMessage])
+    const userMsg = { role: 'user', content: input }
+    setMessages(prev => [...prev, userMsg])
     setInput('')
     setIsLoading(true)
 
@@ -95,13 +80,12 @@ export default function ExcalidrawPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage],
-          modelConfig: { model: 'grok-beta' }, // 根据你实际的模型配置
+          messages: [...messages, userMsg],
         }),
       })
 
       if (!res.ok || !res.body) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: '请求失败，请重试' }])
+        setMessages(prev => [...prev, { role: 'assistant', content: '请求失败' }])
         return
       }
 
@@ -112,27 +96,21 @@ export default function ExcalidrawPage() {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-
         buffer += decoder.decode(value, { stream: true })
 
-        // 实时提取工具调用（display_diagram）
-        const toolCallMatches = buffer.match(/\{[\s\S]*"tool":"display_diagram"[\s\S]*\}/g)
-        if (toolCallMatches && excalidrawAPI) {
+        const matches = buffer.match(/\{[\s\S]*"xml":\s*"([^"]*)"/)
+        if (matches && excalidrawAPI) {
           try {
-            const lastCall = toolCallMatches[toolCallMatches.length - 1]
-            const parsed = JSON.parse(lastCall)
-            if (parsed.xml) {
-              const newElements = xmlToExcalidrawElements(parsed.xml)
-              excalidrawAPI.updateScene({ elements: newElements })
-              excalidrawAPI.scrollToContent(newElements)
-            }
-          } catch (e) {
-            // 解析失败继续等完整 JSON
-          }
+            const xml = matches[1].replace(/\\"/g, '"')
+            const elements = xmlToExcalidrawElements(xml)
+            excalidrawAPI.updateScene({ elements })
+            excalidrawAPI.scrollToContent(elements)
+            buffer = '' // 清空，防止重复解析
+          } catch (e) { }
         }
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: '网络错误' }])
+      setMessages(prev => [...prev, { role: 'assistant', content: '网络错误' }])
     } finally {
       setIsLoading(false)
     }
@@ -140,31 +118,26 @@ export default function ExcalidrawPage() {
 
   return (
     <div className="flex h-screen">
-      {/* 左侧聊天区 */}
+      {/* 左侧 AI 聊天 */}
       <div className="w-96 bg-gray-50 border-r flex flex-col">
-        <div className="p-4 font-bold text-lg border-b">AI 绘图助手</div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((msg, i) => (
-            <div key={i} className={`${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-              <div
-                className={`inline-block px-4 py-2 rounded-lg max-w-xs ${
-                  msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                }`}
-              >
-                {msg.content}
+        <div className="p-4 font-bold border-b">AI 绘图助手</div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {messages.map((m, i) => (
+            <div key={i} className={m.role === 'user' ? 'text-right' : 'text-left'}>
+              <div className={`inline-block px-4 py-2 rounded-lg max-w-xs ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+                {m.content}
               </div>
             </div>
           ))}
-          {isLoading && <div className="text-center text-gray-500">AI 正在思考...</div>}
+          {isLoading && <div className="text-center text-gray-500">思考中...</div>}
         </div>
         <div className="p-4 border-t">
           <div className="flex gap-2">
             <input
-              type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-              placeholder="描述你想要的图表，例如：画一个用户登录流程"
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+              placeholder="描述你想要的图表..."
               className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isLoading}
             />
@@ -180,12 +153,11 @@ export default function ExcalidrawPage() {
       </div>
 
       {/* 右侧 Excalidraw 画布 */}
-      <div className="flex-1 relative">
+      <div className="flex-1">
         <Excalidraw
-          excalidrawAPI={(api) => setExcalidrawAPI(api)}
+          excalidrawAPI={api => setExcalidrawAPI(api)}
           theme="light"
           langCode="zh-CN"
-          viewModeEnabled={false}
         />
       </div>
     </div>
