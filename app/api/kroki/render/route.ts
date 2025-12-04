@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Default to kroki.io
 const DEFAULT_RENDERER =
-  process.env.KROKI_RENDER_BASE?.replace(/\/$/, '') || 'http://vg.007988.xyz:8000'
+  process.env.KROKI_RENDER_BASE?.replace(/\/$/, '') || 'https://kroki.io'
 
 // 支持的图表类型
 const DIAGRAM_TYPES: Record<string, string> = {
@@ -80,20 +80,29 @@ function detectActualDiagramType(definition: string, defaultType: string): strin
   return defaultType
 }
 
-// 关键：使用浏览器原生 CompressionStream 替代 zlib（Edge Runtime 支持）
+// 修复：使用 'deflate' 而非 'deflate-raw'，并添加错误处理
 async function encodeDiagram(definition: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(definition)
+  try {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(definition)
 
-  const compressed = await new Response(
-    new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))
-  ).arrayBuffer()
+    // 使用 'deflate' 模式（Kroki 官方推荐，避免 raw 兼容问题）
+    const compressedStream = new Blob([data]).stream().pipeThrough(new CompressionStream('deflate'))
+    const compressed = await new Response(compressedStream).arrayBuffer()
 
-  return Buffer.from(compressed)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
+    let encoded = Buffer.from(compressed).toString('base64')
+    encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+    // 验证编码长度（避免 URI 太长导致 414）
+    if (encoded.length > 4000) {
+      throw new Error('Encoded diagram too long for Kroki URI (max ~4096 chars)')
+    }
+
+    return encoded
+  } catch (error) {
+    console.error('Kroki encoding error:', error)
+    throw new Error(`Encoding failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -118,8 +127,15 @@ export async function POST(request: NextRequest) {
   const finalDiagramType =
     diagramType && diagramType !== 'auto' ? diagramType : detectDiagramType(definition)
 
-  // 修复变量名：你之前写成了 diagramDefinition，这里要用 definition
-  const encoded = await encodeDiagram(definition)
+  let encoded: string
+  try {
+    encoded = await encodeDiagram(definition)
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Diagram encoding failed.' },
+      { status: 500 }
+    )
+  }
 
   const url = `${DEFAULT_RENDERER}/${finalDiagramType}/svg/${encoded}`
 
@@ -131,8 +147,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
+      console.error('Kroki response:', response.status, response.statusText, url) // 日志调试
       return NextResponse.json(
-        { error: `Kroki service responded with ${response.status} ${response.statusText || ''}`.trim() },
+        {
+          error: `Kroki service failed with ${response.status}: ${response.statusText}. Try a simpler diagram or check syntax.`,
+          diagramType: finalDiagramType,
+          url, // 返回 URL 便于调试
+        },
         { status: response.status }
       )
     }
@@ -154,8 +175,13 @@ export async function POST(request: NextRequest) {
       renderer: DEFAULT_RENDERER,
     })
   } catch (error) {
+    console.error('Kroki fetch error:', error, url)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error contacting Kroki service.' },
+      {
+        error: error instanceof Error ? error.message : 'Failed to fetch from Kroki service.',
+        diagramType: finalDiagramType,
+        url,
+      },
       { status: 502 }
     )
   }
