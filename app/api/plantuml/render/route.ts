@@ -3,7 +3,7 @@ export const maxDuration = 60
 
 import { NextRequest, NextResponse } from 'next/server'
 
-// 用官方（稳！）
+// 用官方 Kroki PlantUML 端点（最稳）
 const PLANTUML_BASE = 'https://kroki.io/plantuml/svg'
 
 export async function POST(request: NextRequest) {
@@ -20,13 +20,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Definition cannot be empty' }, { status: 400 })
   }
 
-  // 自动添加 PlantUML 标签（如果用户忘了）
+  // 智能修复：自动添加 @startuml / @enduml（如果缺失）
   let fullDefinition = definition.trim()
+  fullDefinition = fullDefinition.replace(/^\s*@startuml\s*/i, '').replace(/\s*@enduml\s*$/i, '') // 清理多余
   if (!fullDefinition.startsWith('@startuml')) fullDefinition = `@startuml\n${fullDefinition}`
   if (!fullDefinition.endsWith('@enduml')) fullDefinition += '\n@enduml'
 
+  // 基本语法校验（可选，防止明显错误）
+  if (!fullDefinition.includes('rectangle') && !fullDefinition.includes('class') && !fullDefinition.includes('actor')) {
+    return NextResponse.json(
+      { 
+        error: 'Invalid PlantUML: Add elements like "rectangle Main { ... }" or "Alice -> Bob". Full example: @startuml Alice -> Bob: Hi @enduml',
+        suggestedDefinition: `@startuml\n${fullDefinition}\n@enduml` // 返回建议
+      },
+      { status: 400 }
+    )
+  }
+
   try {
-    // POST 原始文本（无压缩，Kroki 直接解析）
+    // POST 原始文本（Kroki 直接解析，无压缩问题）
     const response = await fetch(PLANTUML_BASE, {
       method: 'POST',
       headers: { 
@@ -38,10 +50,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      console.error('PlantUML response:', response.status, response.statusText, fullDefinition.substring(0, 100)) // 日志截断
+      // 增强错误提示：返回修复后的 definition 片段
+      const errorBody = await response.text().substring(0, 200) // Kroki 错误详情
       return NextResponse.json(
         { 
-          error: `PlantUML failed: ${response.status} - Check syntax (needs @startuml/@enduml). Full def: ${fullDefinition.substring(0, 200)}...` 
+          error: `PlantUML syntax error (${response.status}): ${errorBody}. Check tags (@startuml/@enduml) and add relationships (e.g., Alice -> Main).`,
+          fixedDefinition: fullDefinition.substring(0, 300) + '...', // 帮助调试
+          renderer: 'kroki.io'
         },
         { status: response.status }
       )
