@@ -64,10 +64,12 @@ To deploy to Cloudflare Pages:
 Alternatively, you can deploy using the Wrangler CLI:
 
 ```bash
-npm run deploy
+npm run deploy -- --project-name YOUR_PROJECT_NAME
 ```
 
 Note: You'll need to configure your Cloudflare credentials for the Wrangler CLI first.
+
+Replace `YOUR_PROJECT_NAME` with your actual Cloudflare Pages project name.
 
 ## Configuration Files
 
