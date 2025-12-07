@@ -1,84 +1,64 @@
-"use server";
+export const runtime = 'edge'
+export const maxDuration = 60
 
-import { Buffer } from "node:buffer";
-import { NextRequest, NextResponse } from "next/server";
-import { encode } from "plantuml-encoder";
+import { NextRequest, NextResponse } from 'next/server'
 
-const DEFAULT_RENDERERS = [
-    process.env.PLANTUML_RENDER_BASE?.replace(/\/$/, ""),
-    "https://www.plantuml.com/plantuml/svg",
-    "http://vg.007988.xyz:8000/plantuml/svg",
-    "https://kroki.io/plantuml/svg",
-].filter((value): value is string => Boolean(value && value.trim().length > 0));
+const PLANTUML_BASE = 'https://kroki.io/plantuml/svg'
 
 export async function POST(request: NextRequest) {
-    let definition: string | undefined;
+  let definition: string | undefined
 
-    try {
-        const body = await request.json();
-        definition = body?.definition;
-    } catch {
-        return NextResponse.json(
-            { error: "Invalid request body. Expected JSON with a definition field." },
-            { status: 400 }
-        );
-    }
+  try {
+    const body = await request.json()
+    definition = body?.definition
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
 
-    if (!definition || !definition.trim()) {
-        return NextResponse.json(
-            { error: "PlantUML definition cannot be empty." },
-            { status: 400 }
-        );
-    }
+  if (!definition || !definition.trim()) {
+    return NextResponse.json({ error: 'Definition cannot be empty' }, { status: 400 })
+  }
 
-    const encoded = encode(definition);
-    const renderers = DEFAULT_RENDERERS.length > 0 ? DEFAULT_RENDERERS : ["https://www.plantuml.com/plantuml/svg"];
-    const errors: string[] = [];
+  // 自动补全 @startuml 和 @enduml
+  let fullDefinition = definition.trim()
+  if (!fullDefinition.match(/^@startuml/i)) {
+    fullDefinition = `@startuml\n${fullDefinition}`
+  }
+  if (!fullDefinition.match(/@enduml\s*$/i)) {
+    fullDefinition += '\n@enduml'
+  }
 
-    for (const renderer of renderers) {
-        const url = `${renderer}/${encoded}`;
-        try {
-            const response = await fetch(url, {
-                cache: "no-store",
-            });
+  try {
+    const response = await fetch(PLANTUML_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+        'Accept': 'image/svg+xml',
+      },
+      body: fullDefinition,
+      cache: 'no-store',
+    })
 
-            if (!response.ok) {
-                errors.push(
-                    `${renderer} responded with ${response.status} ${response.statusText || ""}`.trim()
-                );
-                continue;
-            }
+    if (!response.ok) {
+      // 正确写法：先 await 再 substring
+      const errorText = await response.text()
+      const errorBody = errorText.substring(0, 200)
 
-            const contentType = response.headers.get("content-type") ?? "image/svg+xml";
-            if (!contentType.includes("svg")) {
-                const buffer = Buffer.from(await response.arrayBuffer());
-                const dataUrl = `data:${contentType};base64,${buffer.toString("base64")}`;
-                return NextResponse.json({
-                    svgDataUrl: dataUrl,
-                    renderer,
-                });
-            }
-
-            const svg = await response.text();
-            return NextResponse.json({
-                svg,
-                renderer,
-            });
-        } catch (error) {
-            errors.push(
-                `${renderer} error: ${
-                    error instanceof Error ? error.message : "Unknown renderer error."
-                }`
-            );
-        }
-    }
-
-    return NextResponse.json(
+      return NextResponse.json(
         {
-            error:
-                errors.join(" | ") ||
-                "Unable to render PlantUML diagram with the configured renderers.",
+          error: `PlantUML syntax error (${response.status}): ${errorBody || 'Unknown error'}. Check if @startuml/@enduml tags are correct.`,
+          fixedDefinition: fullDefinition.substring(0, 300) + '...',
         },
-        { status: 502 }
-    );
+        { status: response.status }
+      )
+    }
+
+    const svg = await response.text()
+    return NextResponse.json({ svg, renderer: 'kroki.io' })
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Network error' },
+      { status: 502 }
+    )
+  }
 }
