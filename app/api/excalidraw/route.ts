@@ -1,11 +1,12 @@
+export const runtime = 'edge'
+export const maxDuration = 60
+
 import { streamText, convertToModelMessages } from "ai";
 import { z } from "zod/v3";
 import { resolveModel } from "@/lib/model-provider";
 
 const DEFAULT_MAX_OUTPUT_TOKENS = 12_000;
 const MAX_OUTPUT_TOKENS_CAP = 24_000;
-
-export const maxDuration = 60;
 
 export async function POST(req: Request) {
     try {
