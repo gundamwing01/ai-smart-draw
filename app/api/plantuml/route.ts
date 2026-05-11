@@ -1,5 +1,5 @@
 export const runtime = 'edge'
-export const maxDuration = 60
+export const maxDuration = 90
 
 import { streamText, convertToModelMessages } from "ai";
 import { z } from "zod/v3";
@@ -11,15 +11,16 @@ export async function POST(req: Request) {
 
         const systemMessage = `
 You are a PlantUML expert.
-Translate user intent into clean, well-structured PlantUML diagrams (sequence/class/component/activity/etc.).
+Translate user intent into **clean, simple, and well-structured** PlantUML diagrams.
 
-Rules:
+【重要规则 - 请严格遵守】
+- Always generate SIMPLE and SHORT diagrams. Keep it under 15-20 lines if possible.
+- Use minimal elements, few participants, short labels.
+- Avoid complex layouts, too many arrows, nested structures, or long text.
+- Prefer basic sequence, class, or component diagrams.
 - Always reason about the provided "Current PlantUML snippet" before responding.
 - Respond conversationally but deliver the final code exclusively via the display_plantuml tool.
 - Prefer incremental edits unless the user requests a full rewrite.
-- Keep lifelines, participants, and relationships clearly labeled.
-- Use whitespace, titles, and notes to maintain readability.
-- If the diagram must include colors or styling, use standard PlantUML directives.
 
 Tool usage:
 - Exactly one display_plantuml tool call per assistant turn.
@@ -31,6 +32,7 @@ Tool usage:
         const lastMessageText =
             lastMessage.parts?.find((part: any) => part.type === "text")
                 ?.text || "";
+
         const fileParts =
             lastMessage.parts?.filter((part: any) => part.type === "file") ||
             [];
@@ -55,7 +57,6 @@ ${lastMessageText}
                 const contentParts: any[] = [
                     { type: "text", text: formattedTextContent },
                 ];
-
                 for (const filePart of fileParts) {
                     contentParts.push({
                         type: "image",
@@ -63,7 +64,6 @@ ${lastMessageText}
                         mimeType: filePart.mediaType,
                     });
                 }
-
                 enhancedMessages = [
                     ...enhancedMessages.slice(0, -1),
                     { ...lastModelMessage, content: contentParts },
@@ -96,15 +96,9 @@ ${lastMessageText}
         });
 
         function errorHandler(error: unknown) {
-            if (error == null) {
-                return "unknown error";
-            }
-            if (typeof error === "string") {
-                return error;
-            }
-            if (error instanceof Error) {
-                return error.message;
-            }
+            if (error == null) return 'unknown error';
+            if (typeof error === 'string') return error;
+            if (error instanceof Error) return error.message;
             return JSON.stringify(error);
         }
 
